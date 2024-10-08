@@ -1,0 +1,290 @@
+﻿<!--Viewing this on Google Drive? Select open with chrome above.-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ahron Tzvi Verschleisser - Interactive Resume</title>
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .resume-container {
+            background-color: white;
+            padding: 40px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+
+        h1 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            margin-top: 20px;
+            font-size: 1.5em;
+            border-left: 4px solid #3498db;
+            padding-left: 10px;
+        }
+
+        .contact-info {
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        ul {
+            padding-left: 20px;
+            margin-top: 5px;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-item {
+            background-color: #e8f4fc;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.7em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            .skill-item:hover {
+                background-color: #3498db;
+                color: white;
+            }
+
+        .language-skills {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .language-bar {
+            width: 100px;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .language-progress {
+            height: 100%;
+            background-color: #3498db;
+        }
+
+        .project-item, .experience-item {
+            transition: background-color 0.3s;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .highlight {
+            background-color: #fff4e5;
+        }
+
+        em {
+            font-weight:bolder;
+        }
+    </style>
+</head>
+<body>
+    <div class="resume-container">
+        <header>
+            <h1>Ahron Tzvi Verschleisser</h1>
+            <div id="qr-container"><!--make atag also so can just click it. Top right corner--></div>
+            <div class="contact-info">
+                Email: atversch@gmail.com | Phone: 053-346-4758 | <a href="https://www.linkedin.com/in/atversch" target="_blank">linkedin.com/in/atversch/</a>
+            </div>
+        </header>
+
+        <section class="section">
+            <h2>Education</h2>
+            <ul>
+                <li>
+                    <strong>Master of Science in Biomedical Engineering</strong> (Expected Graduation: 2024)<br>
+                    Technion - Israel Institute of Technology<br>
+                    <em>Thesis</em> under supervision of Prof. Dan Adam: "Begetting B-lines: On the Involvement of the Pleural Membrane in the Physiological Origin of the B-line Artifact"
+                </li>
+                <li>
+                    <strong>Bachelor of Science in Bioengineering</strong> (Graduation: Dec. 2020)<br>
+                    University of Maryland, College Park<br>
+                    Minor: Spanish Language, Culture, and Professional Contexts
+                </li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>Technical Skills</h2>
+            <div class="skills-container">
+                <span class="skill-item" data-skills="matlab,signal-processing">MATLAB (Advanced)</span>
+                <span class="skill-item" data-skills="python,machine-learning">Python (Advanced)</span>
+                <span class="skill-item" data-skills="cpp">C++ (Beginner)</span>
+                <span class="skill-item" data-skills="web">HTML/CSS/JavaScript (Intermediate)</span>
+                <span class="skill-item" data-skills="labview">LabVIEW (Intermediate)</span>
+                <span class="skill-item" data-skills="cad">PTC Creo</span>
+                <span class="skill-item" data-skills="cad">Onshape</span>
+                <span class="skill-item" data-skills="fea">ANSYS LS-Dyna</span>
+                <span class="skill-item" data-skills="medical-imaging">MATLAB DICOM Viewer</span>
+                <span class="skill-item" data-skills="medical-imaging">GE Ultrasound Machine</span>
+                <span class="skill-item" data-skills="git">Git</span>
+                <span class="skill-item" data-skills="machine-learning">Machine Learning</span>
+                <span class="skill-item" data-skills="signal-processing">Signal Processing</span>
+                <span class="skill-item" data-skills="data-analysis">Big Data Analytics</span>
+                <span class="skill-item" data-skills="vba">Excel/Vba</span>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Experience</h2>
+            <ul>
+                <li id="clinical-trial" class="experience-item" data-skills="data-analysis,vba">
+                    <strong>Clinical Trial Enrollment Program Developer</strong> (UT Southwestern Dept. of Internal Medicine 2021-2022: Dallas, TX)<br>
+                    • Developed Excel-based program to track enrollees across multiple <em>Clinical Trials</em><br>
+                    • Implemented database protections and improved patient record alignment
+                </li>
+                <li id="covid-testing" class="experience-item" data-skills="data-analysis,vba">
+                    <strong>COVID Testing Lab Assistant</strong> (ResourcePath 2020-2021: Sterling, VA)<br>
+                    • Performed antigen and rapid PCR tests, contributing to <em>Public Health</em> initiatives<br>
+                    • Assisted in <em>data reporting</em> to state health organizations<br>
+                    • Automated and reduced errors in record digitization with Python and OCR<br>
+                    • Optimized team workflows and configured prompts and validaton in Excel sheets<br>
+                    • Ensured data privacy and security compliance in patient data management
+                </li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>Projects</h2>
+            <ul>
+                <li id="ultrasound-analysis" class="project-item" data-skills="matlab,medical-imaging,signal-processing,fea">
+                    <strong>Ultrasound B-line Artifact Analysis (Technion - Master's Thesis)</strong><br>
+                    • Utilized GE Ultrasound Machine and MATLAB DICOM Viewer for data acquisition and analysis<br>
+                    • Created novel physical phantom to explain the mechanism of B-line formation<br>
+                    • Developed FEA models in ANSYS LS-DYNA to simulate vibration propagation
+                </li>
+                <li id="heart-rate" class="project-item" data-skills="labview,signal-processing">
+                    <strong>Respiration and Heart Rate Analysis System (Technion)</strong><br>
+                    • Built a LabVIEW instrument to simultaneously gather and analyze PPG+EEG data<br>
+                    • Analyzed time signal data to extract Heart Rate and Resperation Rate features<br>
+                    • Displayed recovery curves to identify the best posture to relax post-excersize<br>
+                    • Reduced noise and classified rhythms and beat intervals with <em>Spectral Filtering</em>
+                </li>
+                <li id="anki" class="project-item" data-skills="python,git,web">
+                    <strong>Anki Language Deck Development (Personal 2023-)</strong><br>
+                    • Developed and shared open-source language learning resources<br>
+                    • Presented a breadth of collected knowledge in an engaging way<br>
+                    • Cross-platform optimization for display on mobile and desktop
+                </li>
+                <li id="sleep-stage" class="project-item" data-skills="python,machine-learning">
+                    <strong>AI-based Sleep Stage Identification (Technion)</strong><br>
+                    • Trained <em>Deep Learning</em> model in sleep stage classification<br>
+                    • Developed a segmentation algorithm to leverage various databases for training
+                </li>
+                <li id="cannula-design" class="project-item" data-skills="cad,fea,matlab">
+                    <strong>Expanding Cannula Design (University of Maryland)</strong><br>
+                    • Our team
+                    <a id="capstone_link" href="https://bioe.umd.edu/news/story/bioe-capstone-class-virtually-presents-24-novel-projects">(#5)</a>
+                    designed an expanding cannula for use in pediatric surgery<br>
+                    • Utilized the material properties of Nitinol in the expansion mechanism<br>
+                    • Physical prototyping and modeling in PTC Creo and Onshape<br>
+                    • Met safety requirements set for the project and mandated by legislation
+                </li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>Language Skills</h2>
+            <div class="language-skills">
+                <div>
+                    <span>English: Native</span>
+                    <div class="language-bar"><div class="language-progress" style="width: 100%;"></div></div>
+                </div>
+                <div>
+                    <span>Spanish: Fluent</span>
+                    <div class="language-bar"><div class="language-progress" style="width: 90%;"></div></div>
+                </div>
+                <div>
+                    <span>Hebrew: Literate</span>
+                    <div class="language-bar"><div class="language-progress" style="width: 75%;"></div></div>
+                </div>
+                <div>
+                    <span>Portuguese: Intermediate</span>
+                    <div class="language-bar"><div class="language-progress" style="width: 40%;"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Additional Information</h2>
+            <ul>
+                <li>Experience with leveraging AI tools and emerging technologies in Digital Health</li>
+                <li>Volunteer Language Learning Night Leader at Rujuum</li>
+            </ul>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const skillItems = document.querySelectorAll('.skill-item');
+            const projectItems = document.querySelectorAll('.project-item');
+            const experienceItems = document.querySelectorAll('.experience-item');
+
+            skillItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const skills = item.getAttribute('data-skills').split(',');
+                    highlightAndScrollToItem(skills);
+                });
+            });
+
+            function highlightAndScrollToItem(skills) {
+                const allItems = [...experienceItems, ...projectItems];
+                let firstMatch = null;
+
+                allItems.forEach(item => {
+                    const itemSkills = item.getAttribute('data-skills').split(',');
+                    if (skills.some(skill => itemSkills.includes(skill))) {
+                        item.classList.add('highlight');
+                        setTimeout(() => {
+                            item.classList.remove('highlight');
+                        }, 2000);
+
+                        if (!firstMatch) {
+                            firstMatch = item;
+                        }
+                    }
+                });
+
+                if (firstMatch) {
+                    firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
