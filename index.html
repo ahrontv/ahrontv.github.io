@@ -1,1 +1,54 @@
-"<html><body>Hello World</body></html>" 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Name - Personal Website</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="cv.html">CV</a></li>
+                <li><a href="passion1.html">Passion 1</a></li>
+                <li><a href="passion2.html">Passion 2</a></li>
+                <li><a href="passion3.html">Passion 3</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="about">
+            <h1>Ahron Tzvi Verschleisser</h1>
+            <!--TODO: add an animation so that T. is shown but when scrolled over shows my middle name-->
+            <p> Recent Technion graduate with a Masters in Bioengineering, specializing in medical imaging
+                analysis. Passionate about applying programming skills to biomedical device innovation. 
+                Multilingual with proficiency in Spanish, Portuguese, and Hebrew, aiming to bridge technical 
+                expertise with international communication in product development.</p>
+        </section>
+
+        <section id="projects">
+            <h2>Projects</h2>
+            <div class="carousel">
+                <div class="carousel-container">
+                    <img src="project1.jpg" alt="Project 1" class="carousel-item">
+                    <img src="project2.jpg" alt="Project 2" class="carousel-item">
+                    <img src="project3.jpg" alt="Project 3" class="carousel-item">
+                    <img src="project4.jpg" alt="Project 4" class="carousel-item">
+                    <img src="project5.jpg" alt="Project 5" class="carousel-item">
+                </div>
+                <button class="carousel-button prev">&lt;</button>
+                <button class="carousel-button next">&gt;</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Your Name. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
