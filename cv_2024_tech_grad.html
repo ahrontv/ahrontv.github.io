@@ -6,17 +6,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ahron Tzvi Verschleisser - Interactive Resume</title>
     <style>
+        nav {
+            background-color: #4a4a4a;
+            padding: 1rem 0;
+            padding-left: calc((100vw - 100%)/2);
+            margin-bottom: 20px;
+            width: 100%;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+            nav ul li {
+                margin: 0 1rem;
+            }
+
+                nav ul li a {
+                    color: white;
+                    text-decoration: none;
+                }
+
         body {
             font-family: 'Roboto', Arial, sans-serif;
             line-height: 1.6;
             color: #333;
-            max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding-bottom: 20px;
             background-color: #f9f9f9;
         }
 
         .resume-container {
+            margin: auto;
+            max-width: 800px;
             background-color: white;
             padding: 40px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -112,8 +140,10 @@
             font-weight:bolder;
         }
     </style>
+    
 </head>
 <body>
+    <script id="navScr" src="autoNav.js" onload="addNav()"></script>
     <div class="resume-container">
         <header>
             <h1>Ahron Tzvi Verschleisser</h1>
@@ -121,6 +151,7 @@
             <div class="contact-info">
                 Email: atversch@gmail.com | Phone: 053-346-4758 | <a href="https://www.linkedin.com/in/atversch" target="_blank">linkedin.com/in/atversch/</a>
             </div>
+            
         </header>
 
         <section class="section">
