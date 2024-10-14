@@ -139,6 +139,24 @@
         em {
             font-weight:bolder;
         }
+        #dwnld-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+            #dwnld-btn:hover {
+                background-color: #0056b3;
+            }
     </style>
     
 </head>
@@ -151,7 +169,7 @@
             <div class="contact-info">
                 Email: atversch@gmail.com | Phone: 053-346-4758 | <a href="https://www.linkedin.com/in/atversch" target="_blank">linkedin.com/in/atversch/</a>
             </div>
-            
+
         </header>
 
         <section class="section">
@@ -278,6 +296,8 @@
                 <li>Volunteer Language Learning Night Leader at Rujuum</li>
             </ul>
         </section>
+
+        <button id="dwnld-btn" onclick="downloadFile()">Download PDF</button>
     </div>
 
     <script>
@@ -316,6 +336,13 @@
                 }
             }
         });
+
+        function downloadFile() {
+            const link = document.createElement('a');
+            link.href = 'docs/cv_bg_202848.pdf'; // Replace with the path to your file
+            link.download = 'cv_Ahron_Verschleisser.pdf'; // Replace with the desired file name
+            link.click();
+        }
     </script>
 </body>
 </html>
