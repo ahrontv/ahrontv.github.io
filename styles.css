@@ -1,5 +1,5 @@
-﻿/* styles.css */
-CSS for Fixed Navigation Bar
+﻿/* styles.css CSS for Fixed Navigation Bar*/
+
 /* Force scrollbar to appear on all pages */
 
 body {
@@ -40,7 +40,26 @@ main {
     padding: 2rem;
     max-width: 800px;
     margin: 0 auto;
+    position: relative;
+    width: 100%;
 }
+
+#about {
+    position: relative;
+    width: 100%;
+}
+
+.about-text {
+    width: 70%; /* Adjust width as needed */
+    margin-right: 30%; /* Space for the image */
+}
+
+.about-img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 25%;
+} 
 
 h1, h2 {
     color: #2c3e50;
