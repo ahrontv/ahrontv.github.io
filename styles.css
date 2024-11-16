@@ -9,6 +9,7 @@ body {
     margin: 0;
     padding: 0;
     color: #333;
+    position: relative;
 }
 
 header {
@@ -41,7 +42,7 @@ main {
     max-width: 800px;
     margin: 0 auto;
     position: relative;
-    width: 100%;
+    /*width: 100%;*/
 }
 
 #about {
@@ -50,16 +51,17 @@ main {
 }
 
 .about-text {
-    width: 70%; /* Adjust width as needed */
-    margin-right: 30%; /* Space for the image */
+    /*width: 70%;  Adjust width as needed */
+    /*margin-right: 30%;  Space for the image */
 }
 
-.about-img {
+/*.about-img {
     position: absolute;
     top: 0;
     right: 0;
     width: 25%;
-} 
+} */
+
 
 h1, h2 {
     color: #2c3e50;
@@ -106,7 +108,7 @@ footer {
     color: white;
     text-align: center;
     padding: 1rem 0;
-    position: absolute;
-    bottom: 0;
+    position: static;
+    /*bottom: 0;*/
     width: 100%;
 }
