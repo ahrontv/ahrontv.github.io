@@ -1,0 +1,221 @@
+﻿/* styles.css CSS for Fixed Navigation Bar*/
+
+/* Define theme colors using CSS variables */
+:root {
+    /* Default theme (Forest) */
+    --primary-color: #047857;
+    --secondary-color: #ecfdf5;
+    --text-color: #1f2937;
+    --accent-color: #059669;
+    --carousel-secondary: var(--primary-color);
+    --carousel-background: var(--secondary-color); /* #f0f0f0 */
+}
+
+/* Theme variations */
+[data-theme="ocean"] {
+    --primary-color: #1d4ed8;
+    --secondary-color: #eff6ff;
+    --text-color: #1f2937;
+    --accent-color: #3b82f6;
+    --carousel-secondary: var(--primary-color);
+    --carousel-background: var(--secondary-color); /* #f0f0f0 */
+}
+
+[data-theme="sunset"] {
+    --primary-color: #ea580c;
+    --secondary-color: #fff7ed;
+    --text-color: #1f2937;
+    --accent-color: #f97316;
+    --carousel-secondary: var(--primary-color);
+    --carousel-background: var(--secondary-color); /* #f0f0f0 */
+}
+
+[data-theme="lavender"] {
+    --primary-color: #7e22ce;
+    --secondary-color: #faf5ff;
+    --text-color: #1f2937;
+    --accent-color: #9333ea;
+    --carousel-secondary: var(--primary-color);
+    --carousel-background: var(--secondary-color); /* #f0f0f0 */
+}
+
+[data-theme="mint"] {
+    --primary-color: #16a34a;
+    --secondary-color: #f0fdf4;
+    --text-color: #1f2937;
+    --accent-color: #22c55e;
+    --carousel-secondary: var(--primary-color);
+    --carousel-background: var(--secondary-color); /* #f0f0f0 */
+}
+
+/* Force scrollbar to appear on all pages */
+
+body {
+    overflow-y: scroll;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    color: var(--text-color);
+    background-color: var(--secondary-color);
+}
+
+header {
+    background-color: var(--primary-color);
+    padding: 1rem 0;
+}
+nav {
+    width: 100%;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    background-color: var(--primary-color);
+}
+
+    nav ul li {
+        margin: 0 1rem;
+    }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+main {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    /*width: 100%;*/
+}
+
+#about {
+    position: relative;
+    width: 100%;
+}
+
+.about-text {
+    /*width: 70%;  Adjust width as needed */
+    /*margin-right: 30%;  Space for the image */
+}
+
+/*.about-img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 25%;
+} */
+
+
+h1, h2 {
+    color: #2c3e50;
+}
+
+.carousel {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.carousel-container {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.carousel-item {
+    min-width: 20%;
+    max-width: 40%;
+    height: auto;
+}
+
+.carousel-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 1rem;
+    cursor: pointer;
+}
+
+.prev {
+    left: 0;
+}
+
+.next {
+    right: 0;
+}
+
+footer {
+    background-color: #4a4a4a;
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+    position: static;
+    /*bottom: 0;*/
+    width: 100%;
+}
+
+/* Theme switcher styles */
+.theme-switcher {
+    position: fixed;
+    top: 5.0rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    background: white;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.theme-btn {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+    .theme-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .theme-btn.forest {
+        background-color: #047857;
+    }
+
+    .theme-btn.ocean {
+        background-color: #1d4ed8;
+    }
+
+    .theme-btn.sunset {
+        background-color: #ea580c;
+    }
+
+    .theme-btn.lavender {
+        background-color: #7e22ce;
+    }
+
+    .theme-btn.mint {
+        background-color: #16a34a;
+    }
+
+/* Your existing styles using CSS variables */
+.button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    border: none;
+    cursor: pointer;
+}

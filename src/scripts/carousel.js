@@ -635,7 +635,7 @@ export class Carousel {
 export const carouselStyles = `
         :root {
             --carousel-primary: #00A86B; /* Jade green */
-            --carousel-secondary: #008B5A;
+            --carousel-secondary: #008B5A; /* button hover;  tile border;*/
             --carousel-background: #f0f0f0;
             --tile-shadow: rgba(0, 0, 0, 0.3);
         }
@@ -736,6 +736,7 @@ export const carouselStyles = `
             border: none;
             border-radius: 5px;
             transition: background-color 0.2s ease;
+            background-color: var(--carousel-secondary);
         }
 
             button:hover {

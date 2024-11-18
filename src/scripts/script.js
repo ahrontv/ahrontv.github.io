@@ -1,4 +1,5 @@
 // script.js
+// old basic carousel controls
 document.addEventListener('DOMContentLoaded', () => {
     const carousel = document.querySelector('.carousel-container');
     const items = document.querySelectorAll('.carousel-item');

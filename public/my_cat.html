@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Ahron Verschleisser">
-    <meta name="description" content="Free Web tutorials">
-    <meta name="keywords" content="Ahron, Verschleisser, Resume, About, CV">
+    <meta name="description" content="Random page to see photos of my cat because he is silly. Just for fun.">
+    <meta name="keywords" content="Ahron, Verschleisser, Cat, About, Fun, Playful, Silly">
 
     <title>Ahron Verschleisser - Personal Website</title>
     <link rel="icon" type="image/png" sizes="64x64" href="favicon_cartoon_atv_us.png">
@@ -14,26 +14,27 @@
 <body>
     <header>
         <!--Make nav-->
-        <script id="navScr" src="autoNav.js" onload ="addNav()"></script>
+        <script id="navScr" src="autoNav.js" onload="addNav()"></script>
     </header>
 
     <main>
         <h1>Ahron Tzvi Verschleisser</h1>
         <section id="about">
-            
+
             <!--TODO: add an animation so that T. is shown but when scrolled over shows my middle name-->
             <!--TODO: optimize image for mobile-->
-            <div style="overflow:auto"> <!--clearfix-->
-            
+            <div style="overflow:auto">
+                <!--clearfix-->
+
                 <img class="about-img" src="imgs/atv_lab.jpg" alt="About Image" style="float: right; width: 30%; height: 37.5%; min-width: 200px; min-height: 250px; padding: 20px; padding-right: 0px; ">
                 <p style="font-size:clamp(7px,4vw,30px);"><b>About Me:</b></p>
-            <p id ="aboutP" class="about-text" style="font-size:clamp(5px,3vw,27.5px);">
+                <p id="aboutP" class="about-text" style="font-size:clamp(5px,3vw,27.5px);">
                     &nbsp;&nbsp;&nbsp;&nbsp;Recent Technion graduate with a Masters in Bioengineering, specializing in medical imaging
                     analysis. Passionate about applying programming skills to biomedical device innovation. Multilingual with proficiency in Spanish, Portuguese, and Hebrew, aiming to bridge technical
                     expertise with international communication in product development.
 
                 </p>
-            <script></script>
+                <script></script>
             </div>
         </section>
 
@@ -45,41 +46,42 @@
 
                 // Inject styles
                 const styleSheet = document.createElement('style');
+                styleSheet.id = "carouselStyles";
                 styleSheet.textContent = carouselStyles;
                 styleSheet.textContent += `
-                    :root {
-                        --carousel-primary: #00A86B; /* Jade green */
-                        --carousel-secondary: #008B5A;
-                        --carousel-background: #f0f0f0;
-                        --tile-shadow: rgba(0, 0, 0, 0.3);
-                    }
-                    #projects{
-                        margin-bottom: 100px;
-                    }
-                    .carousel-container{
-                        height: 300px;
-                        min-height: 200px;
-                        /*overflow: hidden; */
-                        border: 2px solid blue;
-                        border-radius: 10px;
-                    }
-                    .tile {
-                        position: absolute;
-                        width: 150px; /* 150px;*/
-                        height: 150px;/*  200px;*/
-                        }
+                                            :root {
+                                                --carousel-primary: #00A86B; /* Jade green */
+                                                --carousel-secondary: var(--primary-color);
+                                                --carousel-background: var(--secondary-color); /* #f0f0f0 */
+                                                --tile-shadow: rgba(0, 0, 0, 0.3);
+                                            }
+                                            #projects{
+                                                margin-bottom: 100px;
+                                            }
+                                            .carousel-container{
+                                                height: 300px;
+                                                min-height: 200px;
+                                                /*overflow: hidden; */
+                                                /*border: 2px solid blue;*/
+                                                border-radius: 10px;
+                                            }
+                                            .tile {
+                                                position: absolute;
+                                                width: 150px; /* 150px;*/
+                                                height: 150px;/*  200px;*/
+                                                }
 
-                    @media (max-width: 768px) {
-                        .carousel-container {
-                            width: 90%;
-                            height: 250px;
-                        }
-                        .tile {
-                            width: 80px;
-                            height: 80px;
-                        }
-                    }
-                    `;
+                                            @media (max-width: 768px) {
+                                                .carousel-container {
+                                                    width: 90%;
+                                                    height: 250px;
+                                                }
+                                                .tile {
+                                                    width: 80px;
+                                                    height: 80px;
+                                                }
+                                            }
+                                            `;
                 document.head.insertBefore(styleSheet, document.head.firstChild);
 
                 const element = {};
@@ -125,7 +127,47 @@
             </script>
         </section>
     </main>
+    <!-- Theme Switcher -->
+    <div class="theme-switcher">
+        <button class="theme-btn forest" data-theme="forest" aria-label="Forest theme"></button>
+        <button class="theme-btn ocean" data-theme="ocean" aria-label="Ocean theme"></button>
+        <button class="theme-btn sunset" data-theme="sunset" aria-label="Sunset theme"></button>
+        <button class="theme-btn lavender" data-theme="lavender" aria-label="Lavender theme"></button>
+        <button class="theme-btn mint" data-theme="mint" aria-label="Mint theme"></button>
+    </div>
+    <script>
+        // Theme switching functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get all theme buttons
+            const themeButtons = document.querySelectorAll('.theme-btn');
 
+            // Add click event to each button
+            themeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Get theme name from data attribute
+                    const theme = button.dataset.theme;
+
+                    // Apply theme to document body
+                    document.body.setAttribute('data-theme', theme);
+                    document.querySelectorAll('carousel-container').forEach((button) => button.setAttribute('data-theme', theme));
+                    document.querySelectorAll('carousel').forEach((button) => button.setAttribute('data-theme', theme));
+                    document.querySelector('.controls').querySelectorAll('button').forEach((button) => {
+                        button.setAttribute('data-theme', theme);
+                        button.style = 'var(--carousel-primary)';
+                    });
+
+                    // Save theme preference to localStorage
+                    localStorage.setItem('selected-theme', theme);
+                });
+            });
+
+            // Load saved theme preference
+            const savedTheme = localStorage.getItem('selected-theme');
+            if (savedTheme) {
+                document.body.setAttribute('data-theme', savedTheme);
+            }
+        });
+    </script>
     <footer>
         <p>&copy; 2024 Ahron Verschleisser. All rights reserved.</p>
     </footer>
