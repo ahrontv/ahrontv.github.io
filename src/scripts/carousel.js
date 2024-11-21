@@ -441,6 +441,7 @@ export class Carousel {
     * @param {number} timestamp - The current timestamp provided by requestAnimationFrame
     */
     updateCarousel(timestamp) {
+        if (this.state.isDragging) return;
         if (!this.state.lastTimestamp) this.state.lastTimestamp = timestamp;
         const deltaTime = (timestamp - this.state.lastTimestamp) / 1000; // Convert to seconds
         this.state.lastTimestamp = timestamp;
@@ -535,7 +536,6 @@ export class Carousel {
     drag(e) {
         const draggingCarousel = Carousel.existingCarousels.filter(crsl => crsl.state.isDragging)[0];
         if (!draggingCarousel) return;
-        if (draggingCarousel.state.isDragging) return
         let currentX, currentY;
         try {
             currentX = e.pageX || (e.touches[0].pageX ?? 0);
