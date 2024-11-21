@@ -535,12 +535,14 @@ export class Carousel {
     drag(e) {
         const draggingCarousel = Carousel.existingCarousels.filter(crsl => crsl.state.isDragging)[0];
         if (!draggingCarousel) return;
+        if (draggingCarousel.state.isDragging) return
         let currentX, currentY;
         try {
             currentX = e.pageX || (e.touches[0].pageX ?? 0);
             currentY = e.pageY || (e.touches[0].pageY ?? 0);
         } catch {
             currentX = 0; currentY = 0;
+            console.log("drag: errored");
         }
 
         const currentTimestamp = Date.now();
