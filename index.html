@@ -8,13 +8,13 @@
     <meta name="keywords" content="Ahron, Verschleisser, Resume, About, CV">
 
     <title>Ahron Verschleisser - Personal Website</title>
-    <link rel="icon" type="image/png" sizes="64x64" href="favicon_cartoon_atv_us.png">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" sizes="64x64" href="src/assets/imgs/favicon_cartoon_atv_us.png">
+    <link rel="stylesheet" href="src/styles/index_styles.css">
 </head>
 <body>
     <header>
         <!--Make nav-->
-        <script id="navScr" src="autoNav.js" onload="addNav()"></script>
+        <script id="navScr" src="src/scripts/autoNav.js" onload="addNav()"></script>
     </header>
 
     <main>
@@ -26,7 +26,7 @@
             <div style="overflow:auto">
                 <!--clearfix-->
 
-                <img class="about-img" src="imgs/atv_lab.jpg" alt="About Image" style="float: right; width: 30%; height: 37.5%; min-width: 200px; min-height: 250px; padding: 20px; padding-right: 0px; ">
+                <img class="about-img" src="src/assets/imgs/atv_lab.jpg" alt="About Image" style="float: right; width: 30%; height: 37.5%; min-width: 200px; min-height: 250px; padding: 20px; padding-right: 0px; ">
                 <p style="font-size:clamp(7px,4vw,30px);"><b>About Me:</b></p>
                 <p id="aboutP" class="about-text" style="font-size:clamp(5px,3vw,27.5px);">
                     &nbsp;&nbsp;&nbsp;&nbsp;Recent Technion graduate with a Masters in Bioengineering, specializing in medical imaging
@@ -41,8 +41,8 @@
         <section id="projects">
             <h2>Projects</h2>
             <script id="moduleScr" type="module">
-                import { Carousel } from './scripts/carousel.js';
-                import { carouselStyles } from './scripts/carousel.js';
+                import { Carousel } from './src/scripts/carousel.js';
+                import { carouselStyles } from './src/scripts/carousel.js';
 
                 // Inject styles
                 const styleSheet = document.createElement('style');
@@ -100,12 +100,13 @@
                     tileWidthMobile: '100px',
                     tileHeightMobile: '100px',
                 };
+                const rPath = './src/assets/imgs/';
                 const tiles = [
-                    { img: "./imgs/haifa_volunteer.png", href: "#81", options: { aspectRatio: 1.1 } },
-                    { img: "./imgs/anki_heb_analysis.png", href: "#82", options: { aspectRatio: .8 } },
-                    { img: "./imgs/thinking_sqrl.jpeg", href: "#83", options: { aspectRatio: .9 } },
-                    { img: "./imgs/plant.jpg", href: "#84", options: { aspectRatio: .9 } },
-                    { img: "./imgs/peek_cat.jpeg", href: "#85", options: { aspectRatio: .7 } },
+                    { img: rPath+"haifa_volunteer.png", href: "#81", options: { aspectRatio: 1.1 } },
+                    { img: rPath + "anki_heb_analysis.png", href: "#82", options: { aspectRatio: .8 } },
+                    { img: rPath + "thinking_sqrl.jpeg", href: "#83", options: { aspectRatio: .9 } },
+                    { img: rPath + "plant.jpg", href: "#84", options: { aspectRatio: .9 } },
+                    { img: rPath + "peek_cat.jpeg", href: "#85", options: { aspectRatio: .7 } },
                     //{ img: "\\airboxing_cat.jpeg", href: "#86", options: { aspectRatio: 1.1 } },
                     //{ img: "\\airboxing_cat.jpeg", href: "#87", options: { aspectRatio: 1.2 } },
                     //{ img: "\\airboxing_cat.jpeg", href: "#88", options: { aspectRatio: 1.3 } },
@@ -173,5 +174,6 @@
     </footer>
 
     <!--<script src="script.js"></script>-->
+    <<script id ="bLinks" src="src/scripts/brokenLinks.js"></script>
 </body>
 </html>

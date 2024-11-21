@@ -28,6 +28,7 @@ export class Carousel {
         tileHeight: '150px',
         tileWidthMobile: '80px',
         tileHeightMobile: '80px',
+        riseHeight: 0, // default calculates is 5% of x_rad. when set nPx
     };
 
     // A rotating arrangment of image tiles that can also be links
@@ -485,7 +486,8 @@ export class Carousel {
             const z = Math.cos(radian) * this.options.zRadius + this.options.zRadius + 2;
             const x = Math.sin(radian) * this.options.x_rad; // 50% 0f parent width or 200
             if (this.options.rise) {
-                const y = Math.sin(radian - (Math.PI / 2)) * this.options.x_rad / 20; // * Math.abs(x / this.options.x_rad);
+                const riseHeight = this.options.riseHeight || this.options.x_rad / 20;
+                const y = Math.sin(radian - (Math.PI / 2)) * riseHeight; // * Math.abs(x / this.options.x_rad);
                 tile.style.transform = `translateX(${x}px) translateY(${y}px) translateZ(${z}px) rotateY(${-acuteAngle}deg)`;
             } else {
                 tile.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${-acuteAngle}deg)`;

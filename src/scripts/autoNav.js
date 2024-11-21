@@ -2,11 +2,11 @@
 // Make reusable navigation bar
 let pgSets = {
     mainPages : {
-        Home: { name: 'Home', href: 'index.html' },
-        Cv: { name: 'CV', href: '/cv_2024_tech_grad.html' },
-        Passion_1: { name: 'Languages', href: '/passion1.html' },
-        Passion_2: { name: 'My Cat', href: '/cat.html' },
-        Passion_3: { name: 'Digital Stickers', href: '/digital stickers.html' },
+        Home: { name: 'Home', href: '/' },
+        Cv: { name: 'CV', href: '/cv/cv-2024-technion-graduate.html' },
+        Passion_1: { name: 'Languages', href: 'https://ahrontv.github.io/hablemos-oso/' }, // if I put /hablemos-oso
+        Passion_2: { name: 'My Cat', href: '/cat/my-cat.html' },
+        Passion_3: { name: 'Digital Stickers', href: '/stickers/digital-stickers.html' },
     }
 };
 
