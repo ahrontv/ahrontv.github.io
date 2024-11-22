@@ -248,13 +248,8 @@ export class Carousel {
         let borderLeftWidth = parseFloat(computedStyle.getPropertyValue('border-left-width'));
         // console.log(borderLeftWidth);
         this.eles.tiles.forEach(tile => {
-            //tile.style.top = `calc(50% - ${tileRect.height / 2}px)`;
-            //tile.style.left = `calc(50% - ${tileRect.width / 2}px)`;
             tile.style.top = `${(this.eles.container.offsetHeight / 2) - (tile.offsetHeight / 2) - borderTopWidth}px`;
             tile.style.left = `${(this.eles.container.offsetWidth / 2) - (tile.offsetWidth / 2) - borderLeftWidth}px`;
-
-            //tile.style.top = `${(containerRect.height / 2) - (tileRect.height / 2)}px`;
-            //tile.style.left = `${(containerRect.width / 2) - (tileRect.width / 2)}px`;
         });
     }
     // tile top 128px left 228.3 w 80 h 80 
@@ -330,24 +325,16 @@ export class Carousel {
         const parentWidth = this.eles.container.getBoundingClientRect().width;
         const aW = parseSize(tWidth, parentWidth); // px
         const aH = parseSize(tHeight, parentWidth);
-        console.log(aW);
         let imgW, imgH; // Calculate the width and height based on the aspect ratio
         if ((aW / aspectRatio) <= aH) {
             imgW = aW;
             imgH = aW / aspectRatio;
-            console.log(imgW);
         } else {
             imgW = aH * aspectRatio;
             imgH = aH;
-            console.log(imgW);
         }
         //Object.assign(img.style, { width: `${imgW}px`, height: `${imgH}px` });
         Object.assign(anchor.style, { width: `${imgW}px`, height: `${imgH}px` });
-        console.log(aW);
-        console.log(aH);
-        console.log(imgW);
-        console.log(imgH);
-        console.log(aspectRatio);
         return { width: imgW, height: imgH };
     }
 
@@ -448,17 +435,15 @@ export class Carousel {
 
         // Update current angle based on angular velocity
         this.state.currentAngle += this.state.angularVelocity * deltaTime; // could become negative/ / Normalize in set to within 0-360 degrees
-        //const cang = this.state.currentAngle + this.state.angularVelocity * deltaTime; // could become negative
-        // this.state.currentAngle = ((this.state.currentAngle % 360) + 360) % 360; 
-
         // Apply friction to gradually slow down the rotation
         this.state.angularVelocity *= Math.pow(this.options.friction, deltaTime); // * 60);
 
         // Check if we need to snap to the nearest tile
         if (Math.abs(this.state.angularVelocity) < this.options.minVelocity) {
-            const nearestAngle = Math.round(this.state.currentAngle / this.options.angleIncrement) * this.options.angleIncrement;
-            const angleDifference = nearestAngle - this.state.currentAngle;
-            //console.log(Math.abs(angleDifference) < this.options.snapThreshold);
+            const nearestAngle = (Math.round(this.state.currentAngle / this.options.angleIncrement) * this.options.angleIncrement); // na [0-360] inclusive
+            const angleDifference = (nearestAngle - this.state.currentAngle); // ca [0-360)
+            
+            if (angleDifference > this.options.angleIncrement) throw new Error('somewhere logic must have failed');
             if (Math.abs(angleDifference) < this.options.snapThreshold) {
                 this.state.currentAngle = nearestAngle;
                 this.state.angularVelocity = 0;
@@ -543,6 +528,7 @@ export class Carousel {
         } catch {
             currentX = 0; currentY = 0;
             console.log("drag: errored");
+            return;
         }
 
         const currentTimestamp = Date.now();
@@ -554,8 +540,8 @@ export class Carousel {
 
         // Update the carousel angle based on the drag distance (reversed direction)
         // const dragAngle = deltaX * 0.5; // Adjust this multiplier to change drag sensitivity
-        const dragAngle = ((deltaX / this.options.x_rad) * 180 / Math.PI) % 360; // from arc length to angle in radians then to deg
-        draggingCarousel.state.currentAngle = (((draggingCarousel.state.currentAngle - dragAngle) % 360) +360) % 360; // Note the '+=' here instead of '-='
+        const dragAngle = ((deltaX / this.options.x_rad) * 180 / Math.PI) % 5; // from arc length to angle in radians then to deg
+        draggingCarousel.state.currentAngle -= dragAngle; // Note the '+=' here instead of '-='
         
 
         // Calculate instantaneous velocity (reversed direction)
@@ -586,6 +572,7 @@ export class Carousel {
         // use average speed of drag to spin the carousel
         // draggingCarousel.state.angularVelocity = -(((180 / Math.PI) * dragDist) / this.options.x_rad) / deltaTime; // Note the negative sign here
         draggingCarousel.state.isDragging = false;
+        this.state.lastTimestamp = 0; // need to reset?
         draggingCarousel.render();
     }
 
@@ -679,7 +666,7 @@ export const carouselStyles = `
             height: 100%;
             transform-style: preserve-3d;
             /*perspective: 10000px;*/
-            transition: transform 0.1s ease-out;
+            /*transition: transform 0.1s ease-out;*/
             /*background-color: lightblue;
             z-index: 1;*/
         }
@@ -699,7 +686,7 @@ export const carouselStyles = `
             box-shadow: 0 0 10px var(--tile-shadow);
             text-decoration: none;
             user-select: none;
-            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            transition: scale 1s ease, opacity 0.3s ease-out; /* transform 0.3s ease-out, opacity 0.3s ease-out;*/
             will-change: transform, opacity;
             overflow: hidden;
         }
