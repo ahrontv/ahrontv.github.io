@@ -505,7 +505,7 @@ export class Carousel {
         const pointerX = e.pageX || e.touches[0].pageX;
         const pointerY = e.pageY || e.touches[0].pageY;
         const cc = Carousel.getClosestCarousel(pointerX, pointerY); //closestCarousel
-        console.log(cc.eles.carusel.id);
+        console.log(cc.eles.carousel.id);
         console.log(e);
 
         cc.state.isDragging = true;
