@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directional Local Contrast for Fiber Detection</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        
+        .lesson-section {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .code-block {
+            background-color: #f1f1f1;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        
+        .formula {
+            background-color: #e8f4fc;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            margin: 15px 0;
+            font-style: italic;
+        }
+        
+        .image-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .key-point {
+            background-color: #e8f8f5;
+            border-left: 4px solid #2ecc71;
+            padding: 10px 15px;
+            margin: 15px 0;
+        }
+        
+        .example-section {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        canvas {
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .visualization-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .matrix-grid {
+            display: inline-grid;
+            grid-gap: 2px;
+            margin: 15px auto;
+        }
+
+        .matrix-cell {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e0e0e0;
+            font-size: 12px;
+        }
+
+        .orientation-indicator {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+        }
+
+        .orientation-line {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80px;
+            height: 2px;
+            background-color: #e74c3c;
+            transform-origin: left center;
+        }
+
+        .comparison-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            max-width: 350px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        /* Simplified filter visualizations */
+        .filter-viz {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            width: 200px;
+            margin: 0 auto;
+        }
+        
+        .filter-cell {
+            width: 100%;
+            aspect-ratio: 1;
+            background-color: #e0e0e0;
+        }
+        
+        .results-table {
+            width: 100%;
+            margin: 20px 0;
+        }
+        
+        .results-table td {
+            text-align: center;
+        }
+        
+        .fiber-example {
+            background-color: #e0f7fa;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Directional Local Contrast for Fiber Detection</h1>
+    
+    <div class="lesson-section">
+        <h2>1. Introduction to Directional Local Contrast</h2>
+        <p>While traditional local contrast measures treat all directions equally, many real-world structures like fibers, vessels, and edges have directional properties. Fibers, in particular, exhibit low contrast variation along their length but higher contrast perpendicular to their orientation.</p>
+        
+        <p>Key characteristics of fiber-like structures in images:</p>
+        <ul>
+            <li>Low intensity variation along the fiber direction</li>
+            <li>Higher intensity variation perpendicular to the fiber direction</li>
+            <li>Typically elongated with relatively consistent width</li>
+            <li>May form networks or meshes with other fibers</li>
+        </ul>
+        
+        <div class="key-point">
+            <p><strong>Key Insight:</strong> By analyzing how local contrast varies with direction, we can detect, enhance, and characterize fiber-like structures in images.</p>
+        </div>
+    </div>
+    
+    <div class="lesson-section">
+        <h2>2. Mathematical Foundations</h2>
+        
+        <h3>Directional Local Contrast</h3>
+        <p>For a pixel at position (x,y), we define the directional local contrast as:</p>
+        
+        <div class="formula">
+            DLC(x,y,θ) = √(∑(I(x+i,y+j) - mean)² · w(i,j,θ)) / ∑w(i,j,θ)
+        </div>
+        
+        <p>Where:</p>
+        <ul>
+            <li>I(x+i,y+j) is the pixel intensity at offset (i,j)</li>
+            <li>w(i,j,θ) is a directional weighting function (typically an elongated Gaussian oriented at angle θ)</li>
+            <li>mean is the weighted average intensity in the neighborhood</li>
+        </ul>
+        
+        <h3>Directional Contrast Ratio</h3>
+        <p>To identify fiber-like structures, we compute the ratio:</p>
+        
+        <div class="formula">
+            DirectionalContrastRatio(x,y) = min(DLC(x,y,θ)) / max(DLC(x,y,θ))
+        </div>
+        
+        <p>Lower values of this ratio (approaching zero) indicate stronger fiber-like characteristics, as the contrast in one direction is much lower than in others.</p>
+        
+        <h3>Structure Tensor Analysis</h3>
+        <p>The structure tensor is a mathematical tool that captures directional information:</p>
+        
+        <div class="formula">
+            ST = [Ix²    IxIy]<br>
+                 [IxIy   Iy² ]
+        </div>
+        
+        <p>Where Ix and Iy are image derivatives in x and y directions. For each pixel, we calculate:</p>
+        <ul>
+            <li>Eigenvalues (λ₁, λ₂) where λ₁ ≥ λ₂ ≥ 0</li>
+            <li>Eigenvectors (v₁, v₂) corresponding to these eigenvalues</li>
+        </ul>
+        
+        <p>The eigenvalues and eigenvectors reveal directional properties:</p>
+        <ul>
+            <li>Fiber-like structure: λ₁ >> λ₂ (one strong direction)</li>
+            <li>The eigenvector v₂ (corresponding to λ₂) indicates the fiber direction</li>
+            <li>Coherence = (λ₁ - λ₂)/(λ₁ + λ₂) measures the directional anisotropy</li>
+        </ul>
+    </div>
+    
+    <div class="lesson-section">
+        <h2>3. Implementation Approaches</h2>
+        
+        <h3>Directional Filter Banks</h3>
+        <p>A practical approach to measure directional local contrast:</p>
+        <ol>
+            <li>Create a set of elongated Gaussian filters at different orientations (e.g., 0°, 15°, 30°, ..., 165°)</li>
+            <li>Convolve the image with each filter</li>
+            <li>For each pixel, find the orientation with the smallest response (indicating low contrast along that direction)</li>
+            <li>Calculate the ratio between minimum and maximum filter responses</li>
+        </ol>
+        
+        <div class="code-block">
+function calculateDirectionalContrast(image, x, y, kernelSize, numOrientations) {
+    let minContrast = Infinity;
+    let maxContrast = 0;
+    let bestOrientation = 0;
+    
+    // Loop through different orientations
+    for (let i = 0; i < numOrientations; i++) {
+        const theta = i * (180 / numOrientations);
+        
+        // Create oriented filter kernel
+        const kernel = createOrientedKernel(kernelSize, theta);
+        
+        // Calculate weighted mean
+        let sum = 0;
+        let weightSum = 0;
+        
+        const halfKernel = Math.floor(kernelSize / 2);
+        
+        for (let ky = 0; ky < kernelSize; ky++) {
+            for (let kx = 0; kx < kernelSize; kx++) {
+                const sourceX = x + (kx - halfKernel);
+                const sourceY = y + (ky - halfKernel);
+                
+                if (sourceX >= 0 && sourceX < image.width &&
+                    sourceY >= 0 && sourceY < image.height) {
+                    const weight = kernel[ky][kx];
+                    sum += image.data[sourceY][sourceX] * weight;
+                    weightSum += weight;
+                }
+            }
+        }
+        
+        const mean = weightSum > 0 ? sum / weightSum : 0;
+        
+        // Calculate weighted variance
+        let variance = 0;
+        weightSum = 0;
+        
+        for (let ky = 0; ky < kernelSize; ky++) {
+            for (let kx = 0; kx < kernelSize; kx++) {
+                const sourceX = x + (kx - halfKernel);
+                const sourceY = y + (ky - halfKernel);
+                
+                if (sourceX >= 0 && sourceX < image.width &&
+                    sourceY >= 0 && sourceY < image.height) {
+                    const weight = kernel[ky][kx];
+                    const diff = image.data[sourceY][sourceX] - mean;
+                    variance += diff * diff * weight;
+                    weightSum += weight;
+                }
+            }
+        }
+        
+        variance = weightSum > 0 ? variance / weightSum : 0;
+        const contrast = Math.sqrt(variance);
+        
+        // Track min/max contrast
+        if (contrast < minContrast) {
+            minContrast = contrast;
+            bestOrientation = theta;
+        }
+        
+        if (contrast > maxContrast) {
+            maxContrast = contrast;
+        }
+    }
+    
+    // Calculate directional contrast ratio
+    const ratio = maxContrast > 0 ? minContrast / maxContrast : 1;
+    
+    return {
+        ratio: ratio,
+        orientation: bestOrientation
+    };
+}</div>
+        
+        <h3>Hessian-Based Analysis</h3>
+        <p>Widely used in medical imaging for vessel detection and adaptable to fiber detection:</p>
+        
+        <div class="code-block">
+function hessianBasedFiberDetection(image, sigma) {
+    // Create output image
+    const width = image.width;
+    const height = image.height;
+    const output = new Array(height).fill().map(() => new Array(width).fill(0));
+    
+    // Smooth the image to reduce noise
+    const smoothedImage = gaussianBlur(image, sigma);
+    
+    // Compute image derivatives
+    const [Ixx, Iyy, Ixy] = computeHessianDerivatives(smoothedImage, sigma);
+    
+    // For each pixel
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            // Form the Hessian matrix
+            const H = [
+                [Ixx[y][x], Ixy[y][x]],
+                [Ixy[y][x], Iyy[y][x]]
+            ];
+            
+            // Compute eigenvalues
+            const eigenvalues = computeEigenvalues(H);
+            const lambda1 = Math.abs(eigenvalues[0]);
+            const lambda2 = Math.abs(eigenvalues[1]);
+            
+            // Ensure lambda1 >= lambda2
+            const temp = lambda1 < lambda2 ? [lambda2, lambda1] : [lambda1, lambda2];
+            const l1 = temp[0];
+            const l2 = temp[1];
+            
+            // Compute fiber measure (Frangi vesselness)
+            if (l2 <= 0) {
+                // Dark fiber on light background
+                // RB measures deviation from blob-like structure
+                const RB = l2 > 0 ? l1 / l2 : l1;
+                
+                // S measures overall structure strength
+                const S = Math.sqrt(l1*l1 + l2*l2);
+                
+                // Beta and c are parameters controlling sensitivity
+                const beta = 0.5;
+                const c = 15.0;
+                
+                output[y][x] = Math.exp(-RB*RB/(2*beta*beta)) * (1 - Math.exp(-S*S/(2*c*c)));
+            } else {
+                output[y][x] = 0; // Not a fiber
+            }
+        }
+    }
+    
+    return output;
+}</div>
+    </div>
+    
+    <div class="lesson-section">
+        <h2>4. Practical Example: Fiber Detection</h2>
+        
+        <div class="fiber-example">
+            <h3>Directional Contrast Example</h3>
+            
+            <p>Consider this simplified example of a horizontal fiber in a small image patch:</p>
+            
+            <div class="image-container">
+                <table border="1" style="border-collapse: collapse; margin: 0 auto;">
+                    <tr>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">10</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">12</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">15</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">11</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">9</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">20</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">25</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">29</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">27</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">22</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #d0d0ff;">150</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #d0d0ff;">155</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #d0d0ff;">158</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #d0d0ff;">152</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #d0d0ff;">149</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">30</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">28</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">32</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">35</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">25</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">8</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">12</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">15</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">17</td>
+                        <td style="width: 30px; height: 30px; text-align: center; background-color: #f0f0f0;">10</td>
+                    </tr>
+                </table>
+                <p><em>A horizontal fiber (blue row) with pixel intensities</em></p>
+            </div>
+            
+            <h4>Analyzing with Directional Filters</h4>
+            
+            <p>Let's apply directional filters at 0° (horizontal) and 90° (vertical):</p>
+            
+            <div class="comparison-container">
+                <div class="comparison-item">
+                    <h5>Horizontal Filter (0°)</h5>
+                    <div class="filter-viz" id="horizontalFilter">
+                        <!-- Filter visualization will be filled by script -->
+                    </div>
+                    <p>Standard deviation along filter: <strong>3.8</strong></p>
+                </div>
+                
+                <div class="comparison-item">
+                    <h5>Vertical Filter (90°)</h5>
+                    <div class="filter-viz" id="verticalFilter">
+                        <!-- Filter visualization will be filled by script -->
+                    </div>
+                    <p>Standard deviation along filter: <strong>72.5</strong></p>
+                </div>
+            </div>
+            
+            <p><strong>Result:</strong> The horizontal filter (aligned with fiber) shows much lower contrast (3.8) than the vertical filter (72.5). This gives us a directional contrast ratio of 3.8/72.5 = 0.052, which is very small, indicating a strong fiber-like structure in the horizontal direction.</p>
+        </div>
+        
+        <div class="example-section">
+            <h3>Interactive Fiber Detection Demo</h3>
+            
+            <div class="canvas-container">
+                <div>
+                    <h4>Original Image</h4>
+                    <canvas id="originalCanvas" width="300" height="300"></canvas>
+                </div>
+                <div>
+                    <h4>Directional Filter Response</h4>
+                    <canvas id="resultCanvas" width="300" height="300"></canvas>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <div class="slider-container">
+                    <label for="angleSlider">Filter Orientation:</label>
+                    <input type="range" id="angleSlider" min="0" max="179" step="15" value="0">
+                    <span id="angleValue">0°</span>
+                </div>
+                
+                <div class="slider-container">
+                    <label for="kernelSizeSlider">Filter Width:</label>
+                    <input type="range" id="kernelSizeSlider" min="3" max="21" step="2" value="11">
+                    <span id="kernelSizeValue">11</span>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="detectButton">Detect Fiber Orientations</button>
+                <button id="resetButton">Reset Demo</button>
+            </div>
+            
+            <div class="visualization-container">
+                <h4>Current Filter Orientation</h4>
+                <div class="orientation-indicator">
+                    <div id="orientationLine" class="orientation-line"></div>
+                </div>
+                <p><strong>How to interpret:</strong> Areas that appear brighter in the result image have low contrast variation in the current filter direction, suggesting the presence of fibers aligned with that direction.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="lesson-section">
+        <h2>5. Applications of Directional Contrast Analysis</h2>
+        
+        <h3>Material Science</h3>
+        <ul>
+            <li>Analyzing fiber orientation in composites</li>
+            <li>Studying fiber density and distribution</li>
+            <li>Quality control in manufacturing</li>
+        </ul>
+        
+        <h3>Medical Imaging</h3>
+        <ul>
+            <li>Blood vessel extraction</li>
+            <li>Nerve fiber tracking in neuroimaging</li>
+            <li>Muscle fiber orientation analysis</li>
+        </ul>
+        
+        <h3>Biological Research</h3>
+        <ul>
+            <li>Cellular structure analysis</li>
+            <li>Collagen fiber orientation in tissues</li>
+            <li>Plant cell wall structure</li>
+        </ul>
+        
+        <h3>Enhanced Edge Detection</h3>
+        <p>By incorporating directional information, edge detection can be more robust, especially for curved or complex boundaries.</p>
+    </div>
+    
+    <div class="lesson-section">
+        <h2>6. Advanced Topics and Optimizations</h2>
+        
+        <h3>Multi-scale Analysis</h3>
+        <p>Real-world images often contain fibers of varying thicknesses. By applying directional filters at multiple scales, we can detect fibers across a range of sizes:</p>
+        <ul>
+            <li>Apply filters with different elongation ratios</li>
+            <li>Combine responses across scales using scale-space theory</li>
+            <li>Weight responses based on fiber coherence at each scale</li>
+        </ul>
+        
+        <h3>Orientation Field Smoothing</h3>
+        <p>Raw orientation measurements can be noisy. Applying smoothing to the orientation field can improve results:</p>
+        <ul>
+            <li>Structure tensor averaging in local neighborhoods</li>
+            <li>Orientation diffusion using partial differential equations</li>
+            <li>Tensor voting for coherence enhancement</li>
+        </ul>
+        
+        <h3>Computational Optimizations</h3>
+        <p>Full directional analysis can be computationally expensive. These techniques can help:</p>
+        <ul>
+            <li>Separable filter approximations</li>
+            <li>FFT-based convolution for large kernels</li>
+            <li>GPU acceleration for parallel processing</li>
+            <li>Sparse representation of directional filters</li>
+        </ul>
+    </div>
+    
+    <div class="lesson-section">
+        <h2>7. Quantifying and Visualizing Results</h2>
+        
+        <h3>Fiber Orientation Distribution</h3>
+        <p>For material analysis, it's often useful to quantify the distribution of fiber orientations:</p>
+        <ul>
+            <li>Histogram of detected orientations</li>
+            <li>Rose diagrams for circular visualization</li>
+            <li>Orientation tensors for compact representation</li>
+        </ul>
+        
+        <h3>Color-Coding Techniques</h3>
+        <p>Effective visualization of directional information:</p>
+        <ul>
+            <li>Hue-based encoding (map orientation to color)</li>
+            <li>Line integral convolution for visualizing orientation fields</li>
+            <li>Streamline visualization for continuous fiber tracking</li>
+        </ul>
+        
+        <h3>Quantitative Metrics</h3>
+        <p>Numerical measures for fiber structures:</p>
+        <ul>
+            <li>Fiber density (percentage of fiber pixels in region)</li>
+            <li>Orientation coherence (consistency of directions)</li>
+            <li>Fiber length distribution</li>
+            <li>Crossing density (number of fiber intersections)</li>
+        </ul>
+    </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fill filter visualizations
+        createFilterVisualization('horizontalFilter', 0);
+        createFilterVisualization('verticalFilter', 90);
+        
+        // Get canvas elements and contexts
+        const originalCanvas = document.getElementById('originalCanvas');
+        const resultCanvas = document.getElementById('resultCanvas');
+        const originalCtx = originalCanvas.getContext('2d');
+        const resultCtx = resultCanvas.getContext('2d');
+        
+        // Get UI elements
+        const angleSlider = document.getElementById('angleSlider');
+        const kernelSizeSlider = document.getElementById('kernelSizeSlider');
+        const angleValue = document.getElementById('angleValue');
+        const kernelSizeValue = document.getElementById('kernelSizeValue');
+        const detectButton = document.getElementById('detectButton');
+        const resetButton = document.getElementById('resetButton');
+        const orientationLine = document.getElementById('orientationLine');
+        
+        // Initialize storage for image data
+        let originalImageData = null;
+        let processingImageData = null;
+        
+        // Create a synthetic fiber image
+        function createFiberImage() {
+            // Clear canvas
+            originalCtx.fillStyle = 'black';
+            originalCtx.fillRect(0, 0, originalCanvas.width, originalCanvas.height);
+            
+            // Draw fibers with different orientations
+            drawFiber(originalCtx, 50, 150, 200, 0, 8, 200);     // Horizontal
+            drawFiber(originalCtx, 150, 50, 200, 90, 8, 200);    // Vertical
+            drawFiber(originalCtx, 50, 50, 200, 45, 8, 200);     // Diagonal
+            drawFiber(originalCtx, 250, 50, 200, -45, 8, 200);   // Diagonal
+            
+            // Add some noise
+            addNoise(originalCtx, 0.1);
+            
+            // Store original image data
+            originalImageData = originalCtx.getImageData(0, 0, originalCanvas.width, originalCanvas.height);
+            
+            // Initialize result canvas
+            resultCtx.putImageData(originalImageData, 0, 0);
+        }
+        
+        // Draw a single fiber
+        function drawFiber(ctx, x, y, length, angleDegrees, width, intensity) {
+            const angleRadians = angleDegrees * Math.PI / 180;
+            
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angleRadians);
+            
+            // Draw the main fiber
+            const gradient = ctx.createLinearGradient(0, -width/2, 0, width/2);
+            gradient.addColorStop(0, `rgba(${intensity},${intensity},${intensity},0.2)`);
+            gradient.addColorStop(0.5, `rgba(${intensity},${intensity},${intensity},1)`);
+            gradient.addColorStop(1, `rgba(${intensity},${intensity},${intensity},0.2)`);
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, -width/2, length, width);
+            
+            ctx.restore();
+        }
+        
+        // Add noise to the image
+        function addNoise(ctx, amount) {
+            const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+            const data = imageData.data;
+            
+            for (let i = 0; i < data.length; i += 4) {
+                const noise = Math.random() * amount * 255;
+                data[i] = Math.min(255, data[i] + noise);
+                data[i+1] = Math.min(255, data[i+1] + noise);
+                data[i+2] = Math.min(255, data[i+2] + noise);
+                data[i+3] = 255;
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
+        }
+        
+        // Create an oriented kernel for directional filtering
+        function createOrientedKernel(size, angleDegrees) {
+            const kernel = [];
+            const center = Math.floor(size / 2);
+            const angleRadians = angleDegrees * Math.PI / 180;
+            const aspect = 5; // Elongation factor - higher means more directional sensitivity
+            
+            // Create kernel weights
+            for (let y = 0; y < size; y++) {
+                kernel[y] = [];
+                for (let x = 0; x < size; x++) {
+                    // Rotate coordinates
+                    const xr = (x - center) * Math.cos(angleRadians) + (y - center) * Math.sin(angleRadians);
+                    const yr = -(x - center) * Math.sin(angleRadians) + (y - center) * Math.cos(angleRadians);
+                    
+                    // Elongated Gaussian
+                    const sigmaX = size / 6;
+                    const sigmaY = sigmaX * aspect;
+                    const weight = Math.exp(-(xr * xr / (2 * sigmaX * sigmaX) + yr * yr / (2 * sigmaY * sigmaY)));
+                    
+                    kernel[y][x] = weight;
+                }
+            }
+            
+            return kernel;
+        }
+        
+        // Apply directional filter with contrast analysis
+        function applyDirectionalFilter(angle, kernelSize) {
+            if (!originalImageData) return;
+            
+            const width = originalCanvas.width;
+            const height = originalCanvas.height;
+            
+            // Create output data
+            const output = new ImageData(width, height);
+            
+            // Get grayscale version of original
+            const grayscale = new Uint8Array(width * height);
+            for (let i = 0; i < originalImageData.data.length; i += 4) {
+                // Simple grayscale conversion
+                grayscale[i/4] = Math.round((originalImageData.data[i] + originalImageData.data[i+1] + originalImageData.data[i+2]) / 3);
+            }
+            
+            // Create filter kernel
+            const kernel = createOrientedKernel(kernelSize, angle);
+            const halfKernel = Math.floor(kernelSize / 2);
+            
+            // Process each pixel with a more efficient approach
+            const bufferSize = width * height;
+            const meanValues = new Float32Array(bufferSize);
+            const contrastValues = new Float32Array(bufferSize);
+            
+            // Calculate local means first (to avoid recalculation in nested loops)
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    let sum = 0;
+                    let weightSum = 0;
+                    
+                    // Apply kernel
+                    for (let ky = 0; ky < kernelSize; ky++) {
+                        const sourceY = y + (ky - halfKernel);
+                        if (sourceY < 0 || sourceY >= height) continue;
+                        
+                        for (let kx = 0; kx < kernelSize; kx++) {
+                            const sourceX = x + (kx - halfKernel);
+                            if (sourceX < 0 || sourceX >= width) continue;
+                            
+                            const weight = kernel[ky][kx];
+                            const srcIdx = sourceY * width + sourceX;
+                            
+                            sum += grayscale[srcIdx] * weight;
+                            weightSum += weight;
+                        }
+                    }
+                    
+                    meanValues[y * width + x] = weightSum > 0 ? sum / weightSum : 0;
+                }
+            }
+            
+            // Now calculate contrast (standard deviation)
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const pixelIdx = y * width + x;
+                    const mean = meanValues[pixelIdx];
+                    let variance = 0;
+                    let weightSum = 0;
+                    
+                    // Apply kernel
+                    for (let ky = 0; ky < kernelSize; ky++) {
+                        const sourceY = y + (ky - halfKernel);
+                        if (sourceY < 0 || sourceY >= height) continue;
+                        
+                        for (let kx = 0; kx < kernelSize; kx++) {
+                            const sourceX = x + (kx - halfKernel);
+                            if (sourceX < 0 || sourceX >= width) continue;
+                            
+                            const weight = kernel[ky][kx];
+                            const srcIdx = sourceY * width + sourceX;
+                            const diff = grayscale[srcIdx] - mean;
+                            
+                            variance += diff * diff * weight;
+                            weightSum += weight;
+                        }
+                    }
+                    
+                    // Store contrast value
+                    contrastValues[pixelIdx] = weightSum > 0 ? Math.sqrt(variance / weightSum) : 0;
+                }
+            }
+            
+            // Find max contrast for normalization
+            let maxContrast = 0.1; // Avoid division by zero
+            for (let i = 0; i < bufferSize; i++) {
+                maxContrast = Math.max(maxContrast, contrastValues[i]);
+            }
+            
+            // Set output pixels - INVERTED to highlight low contrast areas (potential fibers)
+            for (let i = 0; i < bufferSize; i++) {
+                // Invert contrast - low contrast (potential fiber) becomes bright
+                const invertedValue = 255 - (contrastValues[i] / maxContrast * 255);
+                
+                const outIdx = i * 4;
+                output.data[outIdx] = invertedValue;
+                output.data[outIdx + 1] = invertedValue;
+                output.data[outIdx + 2] = invertedValue;
+                output.data[outIdx + 3] = 255;
+            }
+            
+            resultCtx.putImageData(output, 0, 0);
+        }
+        
+        // Detect fibers at multiple orientations
+        function detectFiberOrientations() {
+            if (!originalImageData) return;
+            
+            const width = originalCanvas.width;
+            const height = originalCanvas.height;
+            const kernelSize = parseInt(kernelSizeSlider.value);
+            const numOrientations = 12; // Check 12 different orientations
+            
+            // Get grayscale version of original
+            const grayscale = new Uint8Array(width * height);
+            for (let i = 0; i < originalImageData.data.length; i += 4) {
+                grayscale[i/4] = Math.round((originalImageData.data[i] + originalImageData.data[i+1] + originalImageData.data[i+2]) / 3);
+            }
+            
+            // Arrays to store results
+            const minContrast = new Float32Array(width * height).fill(Infinity);
+            const maxContrast = new Float32Array(width * height).fill(0);
+            const bestOrientation = new Uint8Array(width * height);
+            
+            // Check each orientation
+            for (let o = 0; o < numOrientations; o++) {
+                const angle = o * (180 / numOrientations);
+                
+                // Show progress on canvas
+                resultCtx.fillStyle = 'black';
+                resultCtx.fillRect(0, 0, width, height);
+                resultCtx.fillStyle = 'white';
+                resultCtx.font = '16px Arial';
+                resultCtx.textAlign = 'center';
+                resultCtx.fillText(`Processing orientation ${angle.toFixed(0)}°...`, width/2, height/2);
+                
+                // Create kernel for this orientation
+                const kernel = createOrientedKernel(kernelSize, angle);
+                const halfKernel = Math.floor(kernelSize / 2);
+                
+                // Process each pixel
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        const pixelIdx = y * width + x;
+                        
+                        // Calculate mean
+                        let sum = 0;
+                        let weightSum = 0;
+                        
+                        for (let ky = 0; ky < kernelSize; ky++) {
+                            const sourceY = y + (ky - halfKernel);
+                            if (sourceY < 0 || sourceY >= height) continue;
+                            
+                            for (let kx = 0; kx < kernelSize; kx++) {
+                                const sourceX = x + (kx - halfKernel);
+                                if (sourceX < 0 || sourceX >= width) continue;
+                                
+                                const weight = kernel[ky][kx];
+                                const srcIdx = sourceY * width + sourceX;
+                                
+                                sum += grayscale[srcIdx] * weight;
+                                weightSum += weight;
+                            }
+                        }
+                        
+                        const mean = weightSum > 0 ? sum / weightSum : 0;
+                        
+                        // Calculate variance
+                        let variance = 0;
+                        weightSum = 0;
+                        
+                        for (let ky = 0; ky < kernelSize; ky++) {
+                            const sourceY = y + (ky - halfKernel);
+                            if (sourceY < 0 || sourceY >= height) continue;
+                            
+                            for (let kx = 0; kx < kernelSize; kx++) {
+                                const sourceX = x + (kx - halfKernel);
+                                if (sourceX < 0 || sourceX >= width) continue;
+                                
+                                const weight = kernel[ky][kx];
+                                const srcIdx = sourceY * width + sourceX;
+                                const diff = grayscale[srcIdx] - mean;
+                                
+                                variance += diff * diff * weight;
+                                weightSum += weight;
+                            }
+                        }
+                        
+                        const contrast = weightSum > 0 ? Math.sqrt(variance / weightSum) : 0;
+                        
+                        // Update min/max contrast
+                        if (contrast < minContrast[pixelIdx]) {
+                            minContrast[pixelIdx] = contrast;
+                            bestOrientation[pixelIdx] = o;
+                        }
+                        
+                        if (contrast > maxContrast[pixelIdx]) {
+                            maxContrast[pixelIdx] = contrast;
+                        }
+                    }
+                }
+            }
+            
+            // Create output image
+            const output = new ImageData(width, height);
+            
+            // Visualize results
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const pixelIdx = y * width + x;
+                    const outIdx = pixelIdx * 4;
+                    
+                    // Calculate contrast ratio (low values indicate fiber-like structure)
+                    const ratio = minContrast[pixelIdx] / (maxContrast[pixelIdx] + 0.1); // Avoid division by zero
+                    
+                    if (ratio < 0.6) { // Threshold for fiber detection
+                        // Map orientation to hue (0-360)
+                        const hue = (bestOrientation[pixelIdx] * (180 / numOrientations)) % 180;
+                        
+                        // Convert HSV to RGB (simplified, with S=1, V based on ratio)
+                        const brightness = Math.max(0, Math.min(255, 255 * (1 - ratio * 1.5)));
+                        
+                        // Simple HSV to RGB conversion
+                        let r, g, b;
+                        const h = hue / 60;
+                        const i = Math.floor(h);
+                        const f = h - i;
+                        const v = brightness / 255;
+                        const p = 0;
+                        const q = v * (1 - f);
+                        const t = v * f;
+                        
+                        switch (i % 6) {
+                            case 0: r = v; g = t; b = p; break;
+                            case 1: r = q; g = v; b = p; break;
+                            case 2: r = p; g = v; b = t; break;
+                            case 3: r = p; g = q; b = v; break;
+                            case 4: r = t; g = p; b = v; break;
+                            case 5: r = v; g = p; b = q; break;
+                        }
+                        
+                        output.data[outIdx] = Math.round(r * 255);
+                        output.data[outIdx + 1] = Math.round(g * 255);
+                        output.data[outIdx + 2] = Math.round(b * 255);
+                    } else {
+                        // Not a fiber, show original intensity in grayscale
+                        const val = grayscale[pixelIdx];
+                        output.data[outIdx] = val;
+                        output.data[outIdx + 1] = val;
+                        output.data[outIdx + 2] = val;
+                    }
+                    
+                    output.data[outIdx + 3] = 255;
+                }
+            }
+            
+            resultCtx.putImageData(output, 0, 0);
+        }
+        
+        // Update orientation line visualization
+        function updateOrientationLine() {
+            const angle = parseInt(angleSlider.value);
+            orientationLine.style.transform = `rotate(${angle}deg)`;
+            angleValue.textContent = angle + '°';
+        }
+        
+        // Helper function to create filter visualizations
+        function createFilterVisualization(elementId, angle) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
+            
+            // Clear container
+            container.innerHTML = '';
+            
+            // Create a 7x7 filter kernel
+            const kernel = createOrientedKernel(7, angle);
+            
+            // Find min/max for normalization
+            let minVal = Infinity;
+            let maxVal = -Infinity;
+            
+            for (let y = 0; y < 7; y++) {
+                for (let x = 0; x < 7; x++) {
+                    minVal = Math.min(minVal, kernel[y][x]);
+                    maxVal = Math.max(maxVal, kernel[y][x]);
+                }
+            }
+            
+            // Create cells
+            for (let y = 0; y < 7; y++) {
+                for (let x = 0; x < 7; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'filter-cell';
+                    
+                    // Normalize and convert to grayscale
+                    const normalizedValue = (kernel[y][x] - minVal) / (maxVal - minVal);
+                    const grayValue = Math.round(normalizedValue * 255);
+                    
+                    cell.style.backgroundColor = `rgb(${grayValue},${grayValue},${grayValue})`;
+                    container.appendChild(cell);
+                }
+            }
+        }
+        
+        // Event listeners
+        angleSlider.addEventListener('input', function() {
+            updateOrientationLine();
+            applyDirectionalFilter(parseInt(this.value), parseInt(kernelSizeSlider.value));
+        });
+        
+        kernelSizeSlider.addEventListener('input', function() {
+            kernelSizeValue.textContent = this.value;
+            applyDirectionalFilter(parseInt(angleSlider.value), parseInt(this.value));
+        });
+        
+        detectButton.addEventListener('click', detectFiberOrientations);
+        
+        resetButton.addEventListener('click', function() {
+            createFiberImage();
+            updateOrientationLine();
+            applyDirectionalFilter(parseInt(angleSlider.value), parseInt(kernelSizeSlider.value));
+        });
+        
+        // Initialize
+        createFiberImage();
+        updateOrientationLine();
+        applyDirectionalFilter(parseInt(angleSlider.value), parseInt(kernelSizeSlider.value));
+    });
+    </script>
+    
+    <div class="lesson-section">
+        <h2>8. Summary and Key Takeaways</h2>
+        
+        <ul>
+            <li>Directional local contrast analyzes how pixel intensity varies in different directions</li>
+            <li>Fiber-like structures show low contrast variation along their length but higher contrast perpendicular to their orientation</li>
+            <li>Implementation approaches include directional filter banks, structure tensor analysis, and Hessian-based methods</li>
+            <li>The directional contrast ratio (min/max) is a key indicator for fiber presence and orientation</li>
+            <li>Applications span material science, medical imaging, and biological research</li>
+            <li>Advanced techniques include multi-scale analysis, orientation field smoothing, and quantitative metrics</li>
+        </ul>
+        
+        <div class="key-point">
+            <p><strong>Remember:</strong> When adapting local contrast for fiber detection, the key insight is to look for directional anisotropy in contrast – where the variation in one direction is significantly less than in others.</p>
+        </div>
+    </div>
+</body>
+</html>

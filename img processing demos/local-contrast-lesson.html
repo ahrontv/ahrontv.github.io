@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Contrast in Digital Image Processing</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        
+        .lesson-section {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .code-block {
+            background-color: #f1f1f1;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        
+        .formula {
+            background-color: #e8f4fc;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            margin: 15px 0;
+            font-style: italic;
+        }
+        
+        .image-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .image-container img {
+            max-width: 100%;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .grid-demo {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+        
+        .grid-cell {
+            background-color: #ddd;
+            padding: 10px;
+            text-align: center;
+            border-radius: 4px;
+        }
+        
+        .highlight {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .key-point {
+            background-color: #e8f8f5;
+            border-left: 4px solid #2ecc71;
+            padding: 10px 15px;
+            margin: 15px 0;
+        }
+        
+        .exercise {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        #interactive-demo {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        #kernel-size {
+            margin: 10px 5px;
+        }
+
+        #pixel-grid {
+            display: grid;
+            gap: 2px;
+            margin: 20px auto;
+            width: fit-content;
+        }
+
+        .pixel {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e0e0e0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .pixel.highlight {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .pixel.result {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        #contrast-result {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Local Contrast in Digital Image Processing</h1>
+    
+    <div class="lesson-section">
+        <h2>1. Introduction to Local Contrast</h2>
+        <p>Local contrast refers to the difference in brightness or color between a pixel and its surrounding pixels in a digital image. Unlike global contrast (which applies to the entire image), local contrast considers the neighborhood of each pixel.</p>
+        
+        <p>Why is local contrast important?</p>
+        <ul>
+            <li>Edge detection and feature extraction</li>
+            <li>Texture analysis</li>
+            <li>Image enhancement</li>
+            <li>Medical image processing</li>
+            <li>Computer vision applications</li>
+        </ul>
+    </div>
+    
+    <div class="lesson-section">
+        <h2>2. Basic Concepts of Local Contrast</h2>
+        
+        <h3>Pixel Neighborhoods</h3>
+        <p>A neighborhood (or window) is a small region surrounding a pixel. Common neighborhood sizes are 3×3, 5×5, or 7×7 pixels.</p>
+        
+        <div class="image-container">
+            <div class="grid-demo">
+                <div class="grid-cell">1</div>
+                <div class="grid-cell">2</div>
+                <div class="grid-cell">3</div>
+                <div class="grid-cell">4</div>
+                <div class="grid-cell highlight">5</div>
+                <div class="grid-cell">6</div>
+                <div class="grid-cell">7</div>
+                <div class="grid-cell">8</div>
+                <div class="grid-cell">9</div>
+            </div>
+            <p><em>A 3×3 neighborhood with the center pixel highlighted</em></p>
+        </div>
+        
+        <h3>Grayscale Images</h3>
+        <p>For simplicity, we'll focus on grayscale images where each pixel has a single intensity value, typically in the range of 0 (black) to 255 (white).</p>
+        
+        <div class="key-point">
+            <p><strong>Key Point:</strong> In real-world applications, local contrast calculation can be extended to color images by applying the techniques to each color channel separately or by working with luminance values.</p>
+        </div>
+    </div>
+    
+    <div class="lesson-section">
+        <h2>3. Methods to Calculate Local Contrast</h2>
+        
+        <h3>Method 1: Max-Min Difference</h3>
+        <p>One of the simplest ways to measure local contrast is to find the difference between the maximum and minimum pixel values in the neighborhood:</p>
+        
+        <div class="formula">
+            LocalContrast = max(neighborhood) - min(neighborhood)
+        </div>
+        
+        <h3>Method 2: Standard Deviation</h3>
+        <p>A more sophisticated approach is to calculate the standard deviation of pixel values in the neighborhood:</p>
+        
+        <div class="formula">
+            LocalContrast = sqrt(sum((pixel_i - mean)²) / N)
+        </div>
+        
+        <p>Where:</p>
+        <ul>
+            <li><code>pixel_i</code> is each pixel value in the neighborhood</li>
+            <li><code>mean</code> is the average value of all pixels in the neighborhood</li>
+            <li><code>N</code> is the number of pixels in the neighborhood</li>
+        </ul>
+        
+        <h3>Method 3: Root Mean Square (RMS) Contrast</h3>
+        <p>RMS contrast is defined as the standard deviation of pixel intensities divided by the mean:</p>
+        
+        <div class="formula">
+            RMSContrast = sqrt(sum((pixel_i - mean)²) / N) / mean
+        </div>
+        
+        <h3>Method 4: Michelson Contrast</h3>
+        <p>Commonly used for patterns where both bright and dark features are equally important:</p>
+        
+        <div class="formula">
+            MichelsonContrast = (max - min) / (max + min)
+        </div>
+    </div>
+    
+    <div class="lesson-section">
+        <h2>4. Implementation Example</h2>
+        
+        <p>Let's implement the standard deviation method for calculating local contrast in pseudocode:</p>
+        
+        <div class="code-block">
+function calculateLocalContrast(image, x, y, windowSize):
+    // Extract neighborhood
+    neighborhood = []
+    halfWindow = floor(windowSize / 2)
+    
+    for i = -halfWindow to halfWindow:
+        for j = -halfWindow to halfWindow:
+            if x+i >= 0 and x+i < image.width and y+j >= 0 and y+j < image.height:
+                neighborhood.append(image[y+j][x+i])
+    
+    // Calculate mean
+    mean = sum(neighborhood) / neighborhood.length
+    
+    // Calculate variance
+    variance = 0
+    for each pixel in neighborhood:
+        variance += (pixel - mean)²
+    variance /= neighborhood.length
+    
+    // Calculate standard deviation
+    localContrast = sqrt(variance)
+    
+    return localContrast
+        </div>
+        
+        <div class="key-point">
+            <p><strong>Handling Image Boundaries:</strong> Note how the code checks for valid pixel coordinates to handle image boundaries. Alternative approaches include:</p>
+            <ul>
+                <li>Padding the image with zeros or a constant value</li>
+                <li>Mirroring pixels at the boundaries</li>
+                <li>Wrapping around to the opposite side of the image</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="lesson-section">
+        <h2>5. Interactive Demo: Calculate Local Contrast</h2>
+        
+        <div id="interactive-demo">
+            <h3>Local Contrast Calculator</h3>
+            
+            <div>
+                <label for="kernel-size">Select neighborhood size:</label>
+                <select id="kernel-size">
+                    <option value="3">3×3</option>
+                    <option value="5">5×5</option>
+                </select>
+                <button id="reset-grid">Reset Grid</button>
+                <button id="random-values">Random Values</button>
+            </div>
+            
+            <p>Click on grid cells to change values (0-255):</p>
+            
+            <div id="pixel-grid"></div>
+            
+            <div id="contrast-result">Select a center pixel to calculate local contrast</div>
+            
+            <div>
+                <button id="calculate-max-min">Max-Min Difference</button>
+                <button id="calculate-std-dev">Standard Deviation</button>
+                <button id="calculate-michelson">Michelson Contrast</button>
+            </div>
+        </div>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const pixelGrid = document.getElementById('pixel-grid');
+                const kernelSizeSelect = document.getElementById('kernel-size');
+                const resetButton = document.getElementById('reset-grid');
+                const randomButton = document.getElementById('random-values');
+                const contrastResult = document.getElementById('contrast-result');
+                const maxMinButton = document.getElementById('calculate-max-min');
+                const stdDevButton = document.getElementById('calculate-std-dev');
+                const michelsonButton = document.getElementById('calculate-michelson');
+                
+                let gridSize = 7; // Fixed outer grid size
+                let kernelSize = parseInt(kernelSizeSelect.value);
+                let selectedCenterX = null;
+                let selectedCenterY = null;
+                let pixels = [];
+                
+                function createGrid() {
+                    pixelGrid.innerHTML = '';
+                    pixelGrid.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+                    pixels = [];
+                    
+                    for (let y = 0; y < gridSize; y++) {
+                        pixels[y] = [];
+                        for (let x = 0; x < gridSize; x++) {
+                            const pixel = document.createElement('div');
+                            pixel.className = 'pixel';
+                            pixel.dataset.x = x;
+                            pixel.dataset.y = y;
+                            
+                            // Initialize with value 128 (mid-gray)
+                            pixels[y][x] = 128;
+                            pixel.textContent = '128';
+                            
+                            pixel.addEventListener('click', function(e) {
+                                if (e.ctrlKey) {
+                                    // Set as center pixel when Ctrl+click
+                                    clearHighlights();
+                                    selectedCenterX = parseInt(this.dataset.x);
+                                    selectedCenterY = parseInt(this.dataset.y);
+                                    highlightNeighborhood();
+                                } else {
+                                    // Change pixel value on regular click
+                                    let value = parseInt(this.textContent);
+                                    value = (value + 25) % 256; // Increment by 25, wrap at 255
+                                    pixels[y][x] = value;
+                                    this.textContent = value;
+                                }
+                            });
+                            
+                            pixelGrid.appendChild(pixel);
+                        }
+                    }
+                    
+                    contrastResult.textContent = 'Select a center pixel to calculate local contrast (Ctrl+click)';
+                    clearHighlights();
+                }
+                
+                function clearHighlights() {
+                    document.querySelectorAll('.pixel').forEach(p => {
+                        p.classList.remove('highlight');
+                        p.classList.remove('result');
+                    });
+                }
+                
+                function highlightNeighborhood() {
+                    if (selectedCenterX === null) return;
+                    
+                    clearHighlights();
+                    const halfKernel = Math.floor(kernelSize / 2);
+                    
+                    for (let y = selectedCenterY - halfKernel; y <= selectedCenterY + halfKernel; y++) {
+                        for (let x = selectedCenterX - halfKernel; x <= selectedCenterX + halfKernel; x++) {
+                            if (x >= 0 && x < gridSize && y >= 0 && y < gridSize) {
+                                const pixel = pixelGrid.children[y * gridSize + x];
+                                pixel.classList.add('highlight');
+                            }
+                        }
+                    }
+                    
+                    // Mark the center pixel as the result pixel
+                    const centerPixel = pixelGrid.children[selectedCenterY * gridSize + selectedCenterX];
+                    centerPixel.classList.remove('highlight');
+                    centerPixel.classList.add('result');
+                }
+                
+                function getNeighborhood() {
+                    if (selectedCenterX === null) return null;
+                    
+                    const neighborhood = [];
+                    const halfKernel = Math.floor(kernelSize / 2);
+                    
+                    for (let y = selectedCenterY - halfKernel; y <= selectedCenterY + halfKernel; y++) {
+                        for (let x = selectedCenterX - halfKernel; x <= selectedCenterX + halfKernel; x++) {
+                            if (x >= 0 && x < gridSize && y >= 0 && y < gridSize) {
+                                neighborhood.push(pixels[y][x]);
+                            }
+                        }
+                    }
+                    
+                    return neighborhood;
+                }
+                
+                function calculateMaxMinDifference() {
+                    const neighborhood = getNeighborhood();
+                    if (!neighborhood) {
+                        contrastResult.textContent = 'Please select a center pixel first (Ctrl+click)';
+                        return;
+                    }
+                    
+                    const max = Math.max(...neighborhood);
+                    const min = Math.min(...neighborhood);
+                    const contrast = max - min;
+                    
+                    contrastResult.textContent = `Max-Min Difference: ${contrast} (Max: ${max}, Min: ${min})`;
+                }
+                
+                function calculateStandardDeviation() {
+                    const neighborhood = getNeighborhood();
+                    if (!neighborhood) {
+                        contrastResult.textContent = 'Please select a center pixel first (Ctrl+click)';
+                        return;
+                    }
+                    
+                    const mean = neighborhood.reduce((a, b) => a + b, 0) / neighborhood.length;
+                    const variance = neighborhood.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / neighborhood.length;
+                    const stdDev = Math.sqrt(variance);
+                    
+                    contrastResult.textContent = `Standard Deviation: ${stdDev.toFixed(2)} (Mean: ${mean.toFixed(2)})`;
+                }
+                
+                function calculateMichelsonContrast() {
+                    const neighborhood = getNeighborhood();
+                    if (!neighborhood) {
+                        contrastResult.textContent = 'Please select a center pixel first (Ctrl+click)';
+                        return;
+                    }
+                    
+                    const max = Math.max(...neighborhood);
+                    const min = Math.min(...neighborhood);
+                    
+                    if (max + min === 0) {
+                        contrastResult.textContent = 'Michelson Contrast: Undefined (Max + Min = 0)';
+                        return;
+                    }
+                    
+                    const contrast = (max - min) / (max + min);
+                    
+                    contrastResult.textContent = `Michelson Contrast: ${contrast.toFixed(4)} (Max: ${max}, Min: ${min})`;
+                }
+                
+                function setRandomValues() {
+                    for (let y = 0; y < gridSize; y++) {
+                        for (let x = 0; x < gridSize; x++) {
+                            const value = Math.floor(Math.random() * 256);
+                            pixels[y][x] = value;
+                            pixelGrid.children[y * gridSize + x].textContent = value;
+                        }
+                    }
+                    
+                    highlightNeighborhood();
+                }
+                
+                // Event listeners
+                kernelSizeSelect.addEventListener('change', function() {
+                    kernelSize = parseInt(this.value);
+                    highlightNeighborhood();
+                });
+                
+                resetButton.addEventListener('click', createGrid);
+                randomButton.addEventListener('click', setRandomValues);
+                
+                maxMinButton.addEventListener('click', calculateMaxMinDifference);
+                stdDevButton.addEventListener('click', calculateStandardDeviation);
+                michelsonButton.addEventListener('click', calculateMichelsonContrast);
+                
+                // Initialize
+                createGrid();
+            });
+        </script>
+    </div>
+    
+    <div class="lesson-section">
+        <h2>6. Applications of Local Contrast</h2>
+        
+        <h3>Edge Detection</h3>
+        <p>Areas with high local contrast often correspond to edges in an image. Common edge detection operators like Sobel, Prewitt, and Canny all use local contrast information.</p>
+        
+        <h3>Contrast Enhancement</h3>
+        <p>Techniques like Contrast Limited Adaptive Histogram Equalization (CLAHE) use local contrast information to enhance image details without amplifying noise.</p>
+        
+        <h3>Feature Extraction</h3>
+        <p>Local contrast is used in feature descriptors like SIFT (Scale-Invariant Feature Transform) and SURF (Speeded-Up Robust Features) for object recognition.</p>
+        
+        <h3>Medical Imaging</h3>
+        <p>Local contrast measurements help identify structures and abnormalities in medical images such as X-rays, MRIs, and CT scans.</p>
+    </div>
+    
+    <div class="lesson-section">
+        <h2>7. Advanced Topics</h2>
+        
+        <h3>Contrast Sensitivity Function (CSF)</h3>
+        <p>The human visual system has varying sensitivity to contrast at different spatial frequencies. Understanding this can help optimize image processing algorithms for human perception.</p>
+        
+        <h3>Multi-Scale Analysis</h3>
+        <p>Analyzing local contrast at multiple scales (different neighborhood sizes) can provide more comprehensive information about image structure.</p>
+        
+        <h3>Noise and Contrast</h3>
+        <p>Local contrast calculations are sensitive to noise. Preprocessing steps like Gaussian blurring can help reduce noise influence.</p>
+    </div>
+    
+    <div class="lesson-section">
+        <h2>8. Practical Exercise</h2>
+        
+        <div class="exercise">
+            <h3>Exercise: Local Contrast Map</h3>
+            <p>Try implementing a function that creates a "contrast map" - an image where each pixel represents the local contrast at that position in the original image.</p>
+            
+            <p>Steps:</p>
+            <ol>
+                <li>Start with a grayscale image</li>
+                <li>For each pixel, calculate its local contrast (using one of the methods discussed)</li>
+                <li>Create a new image where pixel values represent contrast levels</li>
+                <li>Apply color mapping for better visualization</li>
+            </ol>
+            
+            <p>Experiment with different neighborhood sizes and contrast measures to see how they affect the resulting map.</p>
+        </div>
+    </div>
+    
+    <div class="lesson-section">
+        <h2>9. Summary</h2>
+        
+        <ul>
+            <li>Local contrast measures pixel intensity variations in a small neighborhood</li>
+            <li>Common methods include max-min difference, standard deviation, RMS contrast, and Michelson contrast</li>
+            <li>Implementation requires handling image boundaries and selecting appropriate neighborhood sizes</li>
+            <li>Applications include edge detection, contrast enhancement, feature extraction, and medical imaging</li>
+            <li>Advanced topics include human perception, multi-scale analysis, and noise handling</li>
+        </ul>
+        
+        <div class="key-point">
+            <p><strong>Remember:</strong> The choice of contrast measure and neighborhood size depends on the specific application and image characteristics. There's no one-size-fits-all approach to local contrast analysis.</p>
+        </div>
+    </div>
+</body>
+</html>

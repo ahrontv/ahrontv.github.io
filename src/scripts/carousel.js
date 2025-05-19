@@ -501,11 +501,13 @@ export class Carousel {
      */
     startDrag(e) {
         e.preventDefault();
+        console.log('start drag');
         const pointerX = e.pageX || e.touches[0].pageX;
         const pointerY = e.pageY || e.touches[0].pageY;
         const cc = Carousel.getClosestCarousel(pointerX, pointerY); //closestCarousel
-        console.log('start drag');
-        console.log(cc);
+        console.log(cc.eles.carusel.id);
+        console.log(e);
+
         cc.state.isDragging = true;
         cc.state.dragStart.x = pointerX;
         cc.state.dragStart.y = pointerY;

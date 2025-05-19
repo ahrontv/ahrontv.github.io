@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Ahron Verschleisser">
+    <link rel="stylesheet" href="carouselTrack.css">
+    <link rel="icon" type="image/png" sizes="64x64" href="./anki_heb_analysis.png">
+
+</head>
+<body>
+
+    <main>
+        <h1>Ahron Tzvi Verschleisser</h1>
+
+        <section id="projects">
+            <h2>Projects</h2>
+            <div id="bityCarousel"></div>
+            <script id="moduleScr" type="module">
+                import { CarouselTrack } from './carouselTrack.js';
+
+                const element = {};
+                const options = {
+                    autoplay: true,
+                    autoplaySpeed: 3000,
+                    friction: 0.45,
+                    minVelocity: 10,
+                    autoplay: true,
+                    rise: true,
+                    activeScale: 1.1,
+                    arrowSpinSpeed: 70,
+                    maxVelocity: 2000,
+                    tileWidth: '200px',
+                    tileHeight: '200px',
+                    tileWidthMobile: '100px',
+                    tileHeightMobile: '100px',
+                };
+                const rPath = '';
+                const tiles = [
+                    { img: rPath+"haifa_volunteer.png", href: "#81", options: { aspectRatio: 1.1 } },
+                    { img: rPath + "anki_heb_analysis.png", href: "#82", options: { aspectRatio: .8 } },
+                    { img: rPath + "thinking_sqrl.jpeg", href: "#83", options: { aspectRatio: .9 } },
+                    { img: rPath + "plant.jpg", href: "#84", options: { aspectRatio: .9 } },
+                    { img: rPath + "peek_cat.jpeg", href: "#85", options: { aspectRatio: .7 } }
+                ];
+                let track = '';
+                let crsl = new CarouselTrack(document.getElementById("bityCarousel"), 'cat2new', options, tiles);
+
+            </script>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Ahron Verschleisser. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Grid Module Demo</title>
+    <link rel="stylesheet" href="PixelGridModule.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        
+        .demo-section {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .theme-switcher {
+            margin-bottom: 20px;
+        }
+        
+        .info-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f4fc;
+            border-radius: 4px;
+        }
+        
+        /* Custom theme example - showing how to override variables */
+        .custom-blue-theme {
+            --pixel-background: #e3f2fd;
+            --pixel-color: #0d47a1;
+            --pixel-border: 1px solid #bbdefb;
+            
+            --pixel-highlight-background: #2196f3;
+            --pixel-highlight-color: white;
+            --pixel-highlight-border: 1px solid #1e88e5;
+            
+            --pixel-center-background: #f44336;
+            --pixel-center-color: white;
+            --pixel-center-border: 1px solid #e53935;
+        }
+        
+        .custom-warm-theme {
+            --pixel-background: #fff3e0;
+            --pixel-color: #bf360c;
+            --pixel-border: 1px solid #ffe0b2;
+            
+            --pixel-highlight-background: #ff9800;
+            --pixel-highlight-color: white;
+            --pixel-highlight-border: 1px solid #f57c00;
+            
+            --pixel-center-background: #4caf50;
+            --pixel-center-color: white;
+            --pixel-center-border: 1px solid #43a047;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pixel Grid Module Demo</h1>
+    
+    <div class="demo-section">
+        <h2>Basic Usage Example</h2>
+        
+        <div class="theme-switcher">
+            <label for="theme-select">Select Theme:</label>
+            <select id="theme-select">
+                <option value="default">Default Theme</option>
+                <option value="dark-theme">Dark Theme</option>
+                <option value="high-contrast-theme">High Contrast</option>
+                <option value="custom-blue-theme">Custom Blue</option>
+                <option value="custom-warm-theme">Custom Warm</option>
+            </select>
+        </div>
+        
+        <div class="pixel-grid-container">
+            <div id="pixel-grid" class="pixel-grid"></div>
+            
+            <div class="pixel-grid-controls">
+                <button id="random-button">Random Values</button>
+                <button id="reset-button">Reset Grid</button>
+                
+                <label for="kernel-size">Neighborhood Size:</label>
+                <select id="kernel-size">
+                    <option value="3">3×3</option>
+                    <option value="5">5×5</option>
+                    <option value="7">7×7</option>
+                </select>
+            </div>
+            
+            <div id="grid-result" class="pixel-grid-result">
+                Select a center pixel to calculate (Ctrl+click)
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h3>Instructions:</h3>
+            <ul>
+                <li><strong>Click</strong> on a pixel to increase its value</li>
+                <li><strong>Double-click</strong> on a pixel to manually enter a value</li>
+                <li><strong>Ctrl+click</strong> on a pixel to select it as center for calculations</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { PixelGrid } from './PixelGridModule.js';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get DOM elements
+            const container = document.getElementById('pixel-grid');
+            const resultDisplay = document.getElementById('grid-result');
+            const kernelSizeSelect = document.getElementById('kernel-size');
+            const randomButton = document.getElementById('random-button');
+            const resetButton = document.getElementById('reset-button');
+            const themeSelect = document.getElementById('theme-select');
+            
+            // Initialize pixel grid
+            const grid = new PixelGrid(7, container, {
+                initialValue: 128,
+                neighborhoodSize: parseInt(kernelSizeSelect.value)
+            });
+            
+            // Set up calculation handling when center is selected
+            grid.onCenterSelected((pixel, grid) => {
+                // Get neighborhood values
+                const values = grid.getNeighborhoodValues();
+                
+                // Calculate statistics
+                const max = Math.max(...values);
+                const min = Math.min(...values);
+                const maxMin = max - min;
+                
+                // Calculate mean
+                const mean = values.reduce((a, b) => a + b, 0) / values.length;
+                
+                // Calculate standard deviation
+                const variance = values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length;
+                const stdDev = Math.sqrt(variance);
+                
+                // Calculate Michelson contrast
+                const michelson = (max + min !== 0) ? (max - min) / (max + min) : 'N/A';
+                
+                // Display results
+                resultDisplay.innerHTML = `
+                    <div>Center Pixel: (${pixel.x}, ${pixel.y}) = ${pixel.value}</div>
+                    <div>Max-Min: ${maxMin.toFixed(2)} (Max: ${max}, Min: ${min})</div>
+                    <div>Standard Deviation: ${stdDev.toFixed(2)}</div>
+                    <div>Michelson Contrast: ${typeof michelson === 'number' ? michelson.toFixed(4) : michelson}</div>
+                `;
+            });
+            
+            // Set up event handlers
+            kernelSizeSelect.addEventListener('change', (e) => {
+                grid.setNeighborhoodSize(parseInt(e.target.value));
+            });
+            
+            randomButton.addEventListener('click', () => {
+                grid.setRandomValues();
+            });
+            
+            resetButton.addEventListener('click', () => {
+                grid.reset();
+                resultDisplay.textContent = 'Select a center pixel to calculate (Ctrl+click)';
+            });
+            
+            // Theme switcher
+            themeSelect.addEventListener('change', (e) => {
+                // Remove all theme classes
+                container.parentElement.classList.remove(
+                    'dark-theme', 
+                    'high-contrast-theme', 
+                    'custom-blue-theme', 
+                    'custom-warm-theme'
+                );
+                
+                // Add selected theme class if not default
+                if (e.target.value !== 'default') {
+                    container.parentElement.classList.add(e.target.value);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
